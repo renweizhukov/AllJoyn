@@ -199,7 +199,6 @@ int _tmain(int argc, _TCHAR* argv[])
     cout << "[STEP]: Keep waiting for About clients until the user signals for an exit." << endl;
     while (s_interrupt == false) 
     {
-        cout << "[STEP]: Sleep 100 milliseconds." << endl;
         Sleep(100);
     };
 
