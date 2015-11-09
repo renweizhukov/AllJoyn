@@ -17,21 +17,27 @@
 #include "stdafx.h"
 #include "MySessionListener.h"
 #include "MyAboutListener.h"
+#include "AboutClientCommands.h"
+#include "AllJoynContainer.h"
 
 using namespace std;
 using namespace ajn;
 
 MyAboutListener::MyAboutListener(
     BusAttachment *pBus,
+    AllJoynContainer *pAllJoynContainer,
     const char* interfaceName) : 
     m_pBus(pBus),
-    m_interfaceName(interfaceName)
+    m_allJoynContainer(pAllJoynContainer),
+    m_interfaceName(interfaceName),
+    m_sessionId(0)
 {
-    m_sessionListener.reset(new MySessionListener);
+    m_sessionListener.reset(new MySessionListener(this));
 }
 
 MyAboutListener::~MyAboutListener(void)
 {
+
 }
 
 // Print out the fields found in the AboutData. Only fields with known signatures
@@ -140,16 +146,15 @@ void MyAboutListener::Announced(
     QStatus status = ER_OK;
     if (m_pBus != nullptr) 
     {
-        SessionId sessionId = 0;
         SessionOpts opts(SessionOpts::TRAFFIC_MESSAGES, false, SessionOpts::PROXIMITY_ANY, TRANSPORT_ANY);
         m_pBus->EnableConcurrentCallbacks();
 
-        status = m_pBus->JoinSession(busName, port, m_sessionListener.get(), sessionId, opts);
-        cout << "[INFO]: SessionJoined sessionId = " << sessionId <<", status = 0x" 
+        status = m_pBus->JoinSession(busName, port, m_sessionListener.get(), m_sessionId, opts);
+        cout << "[INFO]: SessionJoined sessionId = " << m_sessionId <<", status = 0x" 
             << hex << status << " = " << QCC_StatusText(status) << "." << endl;
-        if ((status == ER_OK) && (sessionId != 0)) 
+        if ((status == ER_OK) && (m_sessionId != 0)) 
         {
-            AboutProxy aboutProxy(*m_pBus, busName, sessionId);
+            AboutProxy aboutProxy(*m_pBus, busName, m_sessionId);
             MsgArg objArg;
 
             aboutProxy.GetObjectDescription(objArg);
@@ -215,49 +220,24 @@ void MyAboutListener::Announced(
 
             const char* intfPath = nullptr;
             objectDescription.GetInterfacePaths(m_interfaceName.c_str(), &intfPath, 1);
-            cout << "[INFO]: Calling " << intfPath << "/" << m_interfaceName << endl;
+            cout << "[INFO]: "<< intfPath << "/" << m_interfaceName << " is available for being called." << endl;
 
-            ProxyBusObject proxyObject(*m_pBus, busName, intfPath, sessionId);
-            status = proxyObject.IntrospectRemoteObject();
-            if (status == ER_OK) 
-            {
-                cout << "[INFO]: Introspected remote object." << endl;
-            }
-            else
-            {
-                cout << "[ERROR]: Failed to introspect remote object" << " (status = 0x" 
-                    << hex << status << " = " << QCC_StatusText(status) << "." << endl;
-            }
-
-            MsgArg arg("s", "ECHO Echo echo...\n");
-            Message replyMsg(*m_pBus);
-            status = proxyObject.MethodCall(m_interfaceName.c_str(), "Echo", &arg, 1, replyMsg);
-            if (status == ER_OK) 
-            {
-                cout << "[INFO]: Called Echo method." << endl;
-            }
-            else
-            {
-                cout << "[ERROR]: Failed to call Echo method" << " (status = 0x" 
-                    << hex << status << " = " << QCC_StatusText(status) << "." << endl;
-                return;
-            }
-
-            char* echoReply = nullptr;
-            status = replyMsg->GetArg(0)->Get("s", &echoReply);
-            if (status == ER_OK) 
-            {
-                cout << "[INFO]: Echo method reply: "<< echoReply << "." << endl;
-            }
-            else
-            {
-                cout << "[ERROR]: Failed to read Echo method reply" << " (status = 0x" 
-                    << hex << status << " = " << QCC_StatusText(status) << "." << endl;
-            }
+            unique_ptr<ProxyBusObject> proxyObject(new ProxyBusObject(*m_pBus, busName, intfPath, m_sessionId));
+            m_allJoynContainer->SetProxyBusObject(proxyObject);
         }
     } 
     else 
     {
         cout << "[ERROR]: BusAttachment is NULL." << endl;
+    }
+}
+
+void MyAboutListener::SessionLost(
+    ajn::SessionId sessionId, 
+    ajn::SessionListener::SessionLostReason reason)
+{
+    if (m_sessionId == sessionId)
+    {
+        m_allJoynContainer->Unjoin();
     }
 }

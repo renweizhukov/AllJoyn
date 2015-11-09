@@ -16,10 +16,15 @@
 
 #pragma once
 
+class MyAboutListener;
+
 class MySessionListener : public ajn::SessionListener
 {
+private:
+    MyAboutListener *m_aboutListener;
+
 public:
-    MySessionListener(void);
+    MySessionListener(MyAboutListener *pAboutListener);
     ~MySessionListener(void);
 
     void SessionLost(

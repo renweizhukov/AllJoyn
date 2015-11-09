@@ -16,12 +16,16 @@
 
 #pragma once
 
+class AllJoynContainer;
+
 class MyAboutListener : public ajn::AboutListener
 {
 private:
     ajn::BusAttachment *m_pBus;
+    AllJoynContainer *m_allJoynContainer;
     const std::string m_interfaceName;
     std::unique_ptr<MySessionListener> m_sessionListener;
+    ajn::SessionId m_sessionId;
 
     void printAboutData(
         ajn::AboutData& aboutData, 
@@ -31,6 +35,7 @@ private:
 public:
     MyAboutListener(
         ajn::BusAttachment *pBus,
+        AllJoynContainer *pAllJoynContainer,
         const char* interfaceName);
     ~MyAboutListener(void);
 
@@ -40,4 +45,8 @@ public:
         ajn::SessionPort port, 
         const ajn::MsgArg& objectDescriptionArg, 
         const ajn::MsgArg& aboutDataArg);
+
+    void SessionLost(
+        ajn::SessionId sessionId, 
+        ajn::SessionListener::SessionLostReason reason);
 };

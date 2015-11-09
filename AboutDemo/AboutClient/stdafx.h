@@ -10,10 +10,14 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
+#include <cctype>
+#include <algorithm>
 #include <memory>
+#include <chrono>
+#include <mutex>
+#include <condition_variable>
 
 #include <tchar.h>
-#include <signal.h>
 
 #include <alljoyn/AboutData.h>
 #include <alljoyn/AboutListener.h>

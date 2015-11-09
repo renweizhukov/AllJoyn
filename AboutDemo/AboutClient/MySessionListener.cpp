@@ -16,18 +16,21 @@
 
 #include "stdafx.h"
 #include "MySessionListener.h"
+#include "MyAboutListener.h"
 
 using namespace std;
 using namespace ajn;
 
-MySessionListener::MySessionListener(void)
+MySessionListener::MySessionListener(MyAboutListener *pAboutListener)
+    : m_aboutListener(pAboutListener)
 {
+
 }
 
 MySessionListener::~MySessionListener(void)
 {
-}
 
+}
 
 void MySessionListener::SessionLost(
     SessionId sessionId, 
@@ -35,4 +38,5 @@ void MySessionListener::SessionLost(
 {
     cout << "[INFO]: SessionLost sessionId = " << sessionId 
         << ", Reason = " << reason << "." << endl;
+
 }
