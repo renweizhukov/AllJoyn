@@ -39,4 +39,5 @@ void MySessionListener::SessionLost(
     cout << "[INFO]: SessionLost sessionId = " << sessionId 
         << ", Reason = " << reason << "." << endl;
 
+    m_aboutListener->SessionLost(sessionId, reason);
 }

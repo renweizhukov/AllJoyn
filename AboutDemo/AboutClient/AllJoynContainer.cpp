@@ -117,7 +117,7 @@ void AllJoynContainer::Init(void)
     status = m_bus->Start();
     if (status == ER_OK)
     {
-        cout << "[STEP]: Started BusAttachment." << endl;
+        cout << "[STEP]: Succeeded starting BusAttachment." << endl;
     }
     else
     {
@@ -160,12 +160,6 @@ void AllJoynContainer::DeInit(void)
         return;
     }
 
-    if (m_aboutListenerRegistered)
-    {
-        m_bus->UnregisterAboutListener(*m_aboutListener);
-        cout << "[STEP]: Unregister aboutListener to the bus." << endl;
-    }
-
     QStatus status = ER_OK;
     if (m_state == AllJoynContainerState::Joined)
     {
@@ -183,7 +177,57 @@ void AllJoynContainer::DeInit(void)
     }
 
     m_proxyBusObject.reset();
-    m_bus.reset();
+    cout << "[STEP]: Destroy the Proxy Bus Object." << endl;
+
+    if (m_aboutListenerRegistered)
+    {
+        m_bus->UnregisterAboutListener(*m_aboutListener);
+        cout << "[STEP]: Unregister aboutListener to the bus." << endl;
+    }
+
+    m_aboutListener.reset();
+    cout << "[STEP]: Destroy the aboutListener." << endl;
+
+    cout << "[STEP]: Disconnecting BusAttachment to router node." << endl;
+    status = m_bus->Disconnect();
+    if (status == ER_OK) 
+    {
+        cout << "[STEP]: Disconnected BusAttachment from router node (BusName " 
+            << m_bus->GetUniqueName().c_str() << ")." << endl;
+    } 
+    else 
+    {
+        cout << "[ERROR]: Failed to disconnect BusAttachment from router node (status = 0x" 
+            << hex << status << " = " << QCC_StatusText(status) << ")." << endl;
+        return;
+    }
+    
+    cout << "[STEP]: Stopping BusAttachment." << endl;
+    status = m_bus->Stop();
+    if (status == ER_OK)
+    {
+        cout << "[STEP]: Succeeded stopping BusAttachment." << endl;
+    }
+    else
+    {
+        cout << "[ERROR]: Failed to stop BusAttachment (status = 0x" << hex << status 
+            << " = " << QCC_StatusText(status) << ")." << endl;
+        return;
+    }
+
+    cout << "[STEP]: Waiting for BusAttachment to be stopped." << endl;
+    status = m_bus->Join();
+    if (status == ER_OK)
+    {
+        cout << "[STEP]: BusAttachment is stopped." << endl;
+        m_bus.reset();
+    }
+    else
+    {
+        cout << "[ERROR]: Failed to wait for BusAttachment to be stopped (status = 0x" << hex << status 
+            << " = " << QCC_StatusText(status) << ")." << endl;
+        return;
+    }
 
     if (m_allJoynRouterInited)
     {
@@ -232,9 +276,12 @@ void AllJoynContainer::Join(void)
     QStatus status = m_bus->WhoImplements(sc_interfaceName);
     if (status == ER_OK) 
     {
-        if (m_proxyBusObjectSet.wait_for(lk, chrono::seconds(60)) == cv_status::timeout) 
+        if (m_proxyBusObjectSet.wait_for(lk, chrono::seconds(60), 
+                [this](){ return static_cast<bool>(m_proxyBusObject != nullptr); }) 
+            == cv_status::timeout) 
         {
-            cout << "[ERROR]: AboutListener hasn't received any announced signal within 60 seconds." << endl;
+            cout << "[ERROR]: Either the AboutListener hasn't received any announced signal within 60 seconds" 
+                " or the Proxy Bus Object is NULL." << endl;
             cout << "[STEP]: Calling CancelWhoImplements." << endl;
             status = m_bus->CancelWhoImplements(sc_interfaceName);
             if (status == ER_OK) 
@@ -249,16 +296,10 @@ void AllJoynContainer::Join(void)
             return;
         }
 
-        SetState(AllJoynContainerState::Joined);
         cout << "[STEP]: WhoImplements called." << endl;
-        if (m_proxyBusObject != nullptr)
-        {
-            cout << "[INFO]: ProxyBusObject created." << endl;
-        }
-        else
-        {
-            cout << "[ERROR]: ProxyBusObject is NULL." << endl;
-        }
+        cout << "[INFO]: ProxyBusObject created." << endl;
+
+        SetState(AllJoynContainerState::Joined);
     } 
     else 
     {

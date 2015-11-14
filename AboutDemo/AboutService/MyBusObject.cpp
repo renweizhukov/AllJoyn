@@ -15,16 +15,21 @@
  ******************************************************************************/
 
 #include "stdafx.h"
+#include "MySessionPortListener.h"
 #include "MyBusObject.h"
+#include "AboutServiceCommands.h"
+#include "AllJoynContainer.h"
 
 using namespace std;
 using namespace ajn;
 
 MyBusObject::MyBusObject(
     BusAttachment& bus, 
+    AllJoynContainer *pAllJoynContainer,
     const char* path, 
     const char* interfaceName) : 
     BusObject(path),
+    m_allJoynContainer(pAllJoynContainer),
     m_interfaceName(interfaceName)
 {
     QStatus status;
@@ -50,6 +55,7 @@ MyBusObject::MyBusObject(
 
 MyBusObject::~MyBusObject(void)
 {
+
 }
 
 void MyBusObject::Echo(
@@ -57,6 +63,8 @@ void MyBusObject::Echo(
     Message& msg) 
 {
     QCC_UNUSED(member);
+
+    m_allJoynContainer->SetAllJoynApiCallProcessing(true);
 
     cout << "[INFO]: Echo method called: " << msg->GetArg(0)->v_string.str << endl;
     const MsgArg* arg((msg->GetArg(0)));
@@ -71,4 +79,6 @@ void MyBusObject::Echo(
         cout << "[ERROR]: Failed to created MethodReply (status = 0x" << hex << status 
             << " = " << QCC_StatusText(status) << ")." << endl;
     }
+
+    m_allJoynContainer->SetAllJoynApiCallProcessing(false);
 }

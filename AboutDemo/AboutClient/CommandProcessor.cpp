@@ -13,7 +13,7 @@ const CommandProcessor::CommandStringAndHelpInfo CommandProcessor::sc_cmdStrAndH
     { "join", "join -- Join the session of a bus object which implements the desired interface. This is required before making the API call." },
     { "call", "call -- Make a call of the API defined by the desired interface." },
     { "q"   , "q    -- Exit." },
-    { "help", "help -- Display the current available commands and their help info." }
+    { "?"   , "?    -- Display the current available commands and their help info." }
 };
 
 CommandProcessor::CommandProcessor(void)
@@ -32,7 +32,7 @@ void CommandProcessor::Run(void)
 
     while (cmdStr != "q")
     {
-        cout << "Please input a command (type \"help\" for current available commands): ";
+        cout << "Please input a command (type \"?\" for current available commands): ";
         cin >> cmdStr;
         transform(cmdStr.begin(), cmdStr.end(), cmdStr.begin(), ::tolower);
 

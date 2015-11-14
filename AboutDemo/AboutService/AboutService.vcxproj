@@ -161,6 +161,9 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AboutServiceCommands.h" />
+    <ClInclude Include="AllJoynContainer.h" />
+    <ClInclude Include="CommandProcessor.h" />
     <ClInclude Include="MyBusObject.h" />
     <ClInclude Include="MySessionPortListener.h" />
     <ClInclude Include="stdafx.h" />
@@ -168,6 +171,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AboutService.cpp" />
+    <ClCompile Include="AboutServiceCommands.cpp" />
+    <ClCompile Include="AllJoynContainer.cpp" />
+    <ClCompile Include="CommandProcessor.cpp" />
     <ClCompile Include="MyBusObject.cpp" />
     <ClCompile Include="MySessionPortListener.cpp" />
     <ClCompile Include="stdafx.cpp">

@@ -26,6 +26,9 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include <algorithm>
+#include <mutex>
+#include <condition_variable>
 
 #include <tchar.h>
 #include <signal.h>

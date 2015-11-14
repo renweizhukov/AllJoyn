@@ -24,9 +24,6 @@
 #include "AllJoynContainer.h"
 #include "CommandProcessor.h"
 
-using namespace std;
-using namespace ajn;
-
 int _tmain(int argc, _TCHAR* argv[])
 {
     QCC_UNUSED(argc);

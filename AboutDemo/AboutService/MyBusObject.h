@@ -16,14 +16,18 @@
 
 #pragma once
 
+class AllJoynContainer;
+
 class MyBusObject : public ajn::BusObject
 {
 private:
+    AllJoynContainer *m_allJoynContainer;
     const std::string m_interfaceName;
 
 public:
     MyBusObject(
         ajn::BusAttachment& bus, 
+        AllJoynContainer *pAllJoynContainer, 
         const char* path, 
         const char* interfaceName);
     ~MyBusObject(void);
