@@ -45,6 +45,9 @@ private:
 
     void SetState(AllJoynContainerState nextState);
 
+    static void MakeCallThreadFunc(const AllJoynContainer* pAjContainer, int threadIndex);
+    void MakeCallInternal(int threadIndex) const;
+
 public:
     AllJoynContainer(void);
     ~AllJoynContainer(void);

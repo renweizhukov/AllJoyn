@@ -129,7 +129,7 @@ void AllJoynContainer::Init(void)
     }
 
     cout << "[STEP]: Starting BusAttachment." << endl;
-    m_bus.reset(new BusAttachment("About Client Demo", true));
+    m_bus.reset(new BusAttachment("About Client Demo", true, 8));
     status = m_bus->Start();
     if (status == ER_OK)
     {

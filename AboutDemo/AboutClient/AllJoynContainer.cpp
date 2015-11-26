@@ -374,14 +374,31 @@ void AllJoynContainer::MakeCall(void) const
         return;
     }
 
+    const int cntThreads = 1000;
+    vector<thread> callThreads;
+    for (int threadIndex = 0; threadIndex < cntThreads; threadIndex++)
+    {
+        callThreads.push_back(thread(AllJoynContainer::MakeCallThreadFunc, this, threadIndex));
+    }
+
+    for_each(callThreads.begin(), callThreads.end(), mem_fn(&thread::join));
+}
+
+void AllJoynContainer::MakeCallThreadFunc(const AllJoynContainer *pAjContainer, int threadIndex)
+{
+    pAjContainer->MakeCallInternal(threadIndex);
+}
+
+void AllJoynContainer::MakeCallInternal(int threadIndex) const 
+{
     QStatus status = m_proxyBusObject->IntrospectRemoteObject();
     if (status == ER_OK) 
     {
-        cout << "[INFO]: Introspected remote object." << endl;
+        cout << "[INFO]: Thread " << dec << threadIndex << ": Introspected remote object." << endl;
     }
     else
     {
-        cout << "[ERROR]: Failed to introspect remote object" << " (status = 0x" 
+        cout << "[ERROR]: Thread " << dec << threadIndex << ": Failed to introspect remote object" << " (status = 0x" 
             << hex << status << " = " << QCC_StatusText(status) << "." << endl;
     }
 
@@ -390,11 +407,11 @@ void AllJoynContainer::MakeCall(void) const
     status = m_proxyBusObject->MethodCall(sc_interfaceName, "Echo", &arg, 1, replyMsg);
     if (status == ER_OK) 
     {
-        cout << "[INFO]: Called Echo method." << endl;
+        cout << "[INFO]: Thread " << dec << threadIndex << ": Called Echo method." << endl;
     }
     else
     {
-        cout << "[ERROR]: Failed to call Echo method" << " (status = 0x" 
+        cout << "[ERROR]: Thread " << dec << threadIndex << ": Failed to call Echo method" << " (status = 0x" 
             << hex << status << " = " << QCC_StatusText(status) << "." << endl;
         return;
     }
@@ -403,11 +420,11 @@ void AllJoynContainer::MakeCall(void) const
     status = replyMsg->GetArg(0)->Get("s", &echoReply);
     if (status == ER_OK) 
     {
-        cout << "[INFO]: Echo method reply: \""<< echoReply << "\"."<< endl;
+        cout << "[INFO]: Thread " << dec << threadIndex << ": Echo method reply: \""<< echoReply << "\"."<< endl;
     }
     else
     {
-        cout << "[ERROR]: Failed to read Echo method reply" << " (status = 0x" 
+        cout << "[ERROR]: Thread " << dec << threadIndex << ": Failed to read Echo method reply" << " (status = 0x" 
             << hex << status << " = " << QCC_StatusText(status) << "." << endl;
     }
 }

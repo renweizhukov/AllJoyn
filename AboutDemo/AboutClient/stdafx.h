@@ -26,10 +26,12 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
+#include <vector>
 #include <cctype>
 #include <algorithm>
 #include <memory>
 #include <chrono>
+#include <thread>
 #include <mutex>
 #include <condition_variable>
 
