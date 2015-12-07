@@ -1,0 +1,351 @@
+<?xml version="1.0"?>
+  <!--
+
+        Copyright AllSeen Alliance. All rights reserved.
+
+           Permission to use, copy, modify, and/or distribute this software for any
+           purpose with or without fee is hereby granted, provided that the above
+           copyright notice and this permission notice appear in all copies.
+
+           THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+           WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+           MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+           ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+           WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+           ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+           OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+  -->
+<controlPanelDevice xmlns="http://www.allseenalliance.org/controlpanel/gen">
+  <name>SmartAirConditioner</name>
+  <headerCode>#include "SmartAirConditionerProvided.h"</headerCode>
+  <languageSet name="languageSet1">
+    <language>en</language>
+  </languageSet>
+  <controlPanels>
+    <controlPanel languageSet="languageSet1">
+      <rootContainer>
+        <name>rootContainer</name>  <!-- Required -->
+        <secured>false</secured>    <!-- Required (true, false) -->
+        <enabled>true</enabled>     <!-- Required (true, false) -->
+        <bgColor>0x1e90ff</bgColor> <!-- Optional (unsigned int, RGB value) -->
+        <label>                     <!-- Optional (code, value) -->
+          <value type="literal" language="en">SmartConn Air Conditioner</value>
+        </label>
+        <hints>                     <!-- Optional (vertical_linear, horizontal_linear) -->
+          <hint>vertical_linear</hint>
+        </hints>
+        <elements>                  <!-- Required (container, action, property, labelProperty)-->
+          <container>
+            <name>dateTimeContainer</name> <!-- Required -->
+            <secured>false</secured>       <!-- Required (true, false) -->
+            <enabled>true</enabled>        <!-- Required (true, false) -->
+            <!-- bgcolor: Optional (unsigned int, RGB value)-->
+            <label>                        <!-- Optional (code, value) -->
+              <value type="literal" language="en">Date and Time</value>
+            </label>
+            <hints>                        <!-- Optional (vertical_linear, horizontal_linear) -->
+              <hint>horizontal_linear</hint>
+            </hints>
+            <elements>
+              <dateProperty>
+                <name>currentDateProperty</name>              <!-- Required -->
+                <getCode>getCurrentDate</getCode>     <!-- Required (pointer to function that returns a property's value) -->
+                <setCode>setCurrentDate(%s)</setCode> <!-- Required (pointer to function that sets a property's value, %s will be replaced by the generator with the appropriate value) -->
+                <secured>false</secured>                      <!-- Required (true, false) -->
+                <enabled>true</enabled>                       <!-- Required (true, false) -->
+                <writable>true</writable>                     <!-- Required (true, false) -->
+                <!-- bgcolor: Optional (unsigned int, RGB value)-->
+                <!-- label: Optional (code, value) -->
+                <hints>                                       <!-- Optional (datepicker) -->
+                  <hint>datepicker</hint>
+                </hints>
+              </dateProperty>
+              <timeProperty>
+                <name>currentTimeProperty</name>              <!-- Required -->
+                <getCode>getCurrentTime</getCode>     <!-- Required (pointer to function that returns a property's value) -->
+                <setCode>setCurrentTime(%s)</setCode> <!-- Required (pointer to function that sets a property's value, %s will be replaced by the generator with the appropriate value) -->
+                <secured>false</secured>                      <!-- Required (true, false) -->
+                <enabled>true</enabled>                       <!-- Required (true, false) -->
+                <writable>true</writable>                     <!-- Required (true, false) -->
+                <!-- bgcolor: Optional (unsigned int, RGB value) -->
+                <!-- label: Optional (code, value) -->
+                <hints>                                       <!-- Optional (timepicker) -->
+                  <hint>timepicker</hint>
+                </hints>
+              </timeProperty>
+            </elements>
+          </container>
+
+          <container>
+            <name>statusContainer</name>
+            <secured>false</secured>
+            <enabled>true</enabled>
+            <!-- bgcolor: Optional (unsigned int, RGB value)-->
+            <label>
+              <value type="literal" language="en">Status</value>
+            </label>
+            <hints>
+              <hint>horizontal_linear</hint>
+            </hints>
+            <elements>
+              <stringProperty>
+                <name>onOffStringProperty</name>       <!-- Required -->
+                <getCode>getOnOffString</getCode>      <!-- Required (pointer to function that returns a property's value) -->
+                <setCode>setOnOffString(%s)</setCode>  <!-- Required (pointer to function that sets a property's value, %s will be replaced by the generator with the appropriate value) -->
+                <secured>false</secured>               <!-- Required (true, false) -->
+                <enabled>true</enabled>                <!-- Required (true, false) -->
+                <writable>false</writable>             <!-- Required (true, false) -->
+                <!-- label: Optional (code, value) -->
+                <!-- bgcolor: Optional (unsigned int, RGB value)-->
+                <hints>                                <!-- Optional (switch, spinner, radiobutton, textview, edittext) -->
+                  <hint>switch</hint>
+                </hints>
+                <constraintVals>                       <!-- Optional (a collection of constraints where each constraint consists of a display and a value) -->
+                  <constraint>
+                    <display>
+                      <value type="literal" language="en">On</value>
+                    </display>
+                    <value>OnState</value>
+                  </constraint>
+                  <constraint>
+                    <display>
+                      <value type="literal" language="en">Off</value>
+                    </display>
+                    <value>OffState</value>
+                  </constraint>
+                </constraintVals>
+              </stringProperty>
+              <scalarProperty dataType="INT16">        <!-- Required (INT16, UINT16, INT32, UINT32, INT64, DOUBLE) -->
+                <name>currentTempProperty</name>       <!-- Required -->
+                <getCode>getCurrentTemp</getCode>      <!-- Required (pointer to function that returns a property's value) -->
+                <setCode>setCurrentTemp(%s)</setCode>  <!-- Required (pointer to function that sets a property's value, %s will be replaced by the generator with the appropriate value) -->
+                <secured>false</secured>               <!-- Required (true, false) -->
+                <enabled>true</enabled>                <!-- Required (true, false) -->
+                <writable>false</writable>             <!-- Required (true, false) -->
+                <label>                                <!-- Optional (code, value) -->
+                  <value type="literal" language="en">Temperature:</value>
+                </label>
+                <!-- bgcolor: Optional (unsigned int, RGB value)-->
+                <hints>                                <!-- Optional (radiobutton, slider, spinner, numberpicker, keypad, numericview) -->
+                  <hint>numericview</hint>
+                </hints>
+                <!-- constraintDefs: optional (connstraintVals, constraintRange) -->
+                <unitMeasure>                          <!-- Optional (code, value)-->
+                  <value type="literal" language="en">Fahrenheit</value>
+                </unitMeasure>
+              </scalarProperty>
+              <scalarProperty dataType="UINT16">
+                <name>currentHumidityProperty</name>
+                <getCode>getCurrentHumidity</getCode>
+                <setCode>setCurrentHumidity(%s)</setCode>
+                <secured>false</secured>
+                <enabled>true</enabled>
+                <writable>false</writable>
+                <label>
+                  <value type="literal" language="en">Humidity:</value>
+                </label>
+                <!-- bgcolor: Optional (unsigned int, RGB value)-->
+                <hints>
+                  <hint>numericview</hint>
+                </hints>
+                <!-- constraintDefs: optional (connstraintVals, constraintRange) -->
+                <unitMeasure>                          <!-- Optional (code, value)-->
+                  <value type="literal" language="en">Percent</value>
+                </unitMeasure>
+              </scalarProperty>
+            </elements>
+          </container>
+
+          <container>
+            <name>actionContainer</name>
+            <secured>false</secured>
+            <enabled>true</enabled>
+            <!-- bgcolor: Optional (unsigned int, RGB value)-->
+            <label>
+              <value type="literal" language="en">On/Off Switch</value>
+            </label>
+            <hints>
+              <hint>horizontal_linear</hint>
+            </hints>
+            <elements>
+              <action>
+                <name>onAction</name>
+                <onAction>
+                  <executeCode>turnOnAc();</executeCode>
+                </onAction>
+                <secured>false</secured>
+                <enabled>true</enabled>
+                <label>
+                  <value type="literal" language="en">Start AC</value>
+                </label>
+                <bgcolor>0xc00</bgcolor>
+                <hints>
+                  <hint>actionButton</hint>
+                </hints>
+              </action>
+              <action>
+                <name>offAction</name>
+                <onAction>
+                  <dialog>
+                    <name>turnOffConfirmDialog</name>  <!-- Required -->
+                    <secured>false</secured>           <!-- Required (true, false) -->
+                    <enabled>true</enabled>            <!-- Required (true, false) -->
+                    <message>                          <!-- Optional (dialog message) -->
+                      <value type="literal" language="en">Are you sure you want to turn off the air conditioner?</value>
+                    </message>
+                    <label>                            <!-- Optional (dialog label text) -->
+                      <value type="literal" language="en">SmartConn Air Conditioner</value>
+                    </label>
+                    <bgcolor>0x1e90ff</bgcolor>        <!-- Optional (unsigned int, RGB value) -->
+                    <hints>                            <!-- Optional (alertdialog) -->
+                      <hint>alertdialog</hint>
+                    </hints>
+                    <button>                           <!-- Required (at most 3 buttons) -->
+                      <label>                                  <!-- Required -->
+                        <value type="literal" language="en">Yes</value>
+                      </label>
+                      <executeCode>turnOffAc();</executeCode>  <!-- Required -->
+                    </button>
+                    <button>
+                      <label>
+                        <value type="literal" language="en">No</value>
+                      </label>
+                      <executeCode>cancelTurnOffAc();</executeCode>
+                    </button>
+                  </dialog>
+                </onAction>
+                <secured>false</secured>
+                <enabled>true</enabled>
+                <label>
+                  <value type="literal" language="en">Stop AC</value>
+                </label>
+                <bgcolor>0x400</bgcolor>
+                <hints>
+                  <hint>actionButton</hint>
+                </hints>
+              </action>
+            </elements>
+          </container>
+
+          <container>
+            <name>controlContainer</name>
+            <secured>false</secured>
+            <enabled>true</enabled>
+            <!-- bgcolor: Optional (unsigned int, RGB value) -->
+            <label>
+              <value type="literal" language="en">Control Panel</value>
+            </label>
+            <hints>
+              <hint>vertical_linear</hint>
+            </hints>
+            <elements>
+              <scalarProperty dataType="UINT16">
+                <name>acModeProperty</name>
+                <getCode>getAcMode</getCode>
+                <setCode>setAcMode(%s)</setCode>
+                <secured>false</secured>
+                <enabled>true</enabled>
+                <writable>true</writable>
+                <label>
+                  <value type="literal" language="en">Air Conditioner Mode</value>
+                </label>
+                <!-- bgcolor: Optional (unsigned int, RGB value) -->
+                <hints>
+                  <hint>spinner</hint>
+                </hints>
+                <constraintDefs>
+                  <constraintVals>
+                    <constraint>                      <!-- Each constraint consists of a value and its display. -->
+                      <display>
+                        <value type="literal" language="en">Auto</value>
+                      </display>
+                      <value>175</value>
+                    </constraint>
+                    <constraint>
+                      <display>
+                        <value type="literal" language="en">Cool</value>
+                      </display>
+                    <value>200</value>
+                    </constraint>
+                    <constraint>
+                      <display>
+                        <value type="literal" language="en">Heat</value>
+                      </display>
+                    <value>225</value>
+                    </constraint>
+                  </constraintVals>
+                </constraintDefs>
+                <!-- unitMeasure: Optional (code, value)-->
+              </scalarProperty>
+              <booleanProperty>
+                <name>turboModeProperty</name>       <!-- Required -->
+                <getCode>getTurboMode</getCode>      <!-- Required (pointer to function that returns a property's value) -->
+                <setCode>setTurboMode(%s)</setCode>  <!-- Required (pointer to function that sets a property's value, %s will be replaced by the generator with the appropriate value) -->
+                <secured>false</secured>             <!-- Required (true, false) -->
+                <enabled>true</enabled>              <!-- Required (true, false) -->
+                <writable>true</writable>            <!-- Required (true, false) -->
+                <label>                              <!-- Optional (code, value) -->
+                  <value type="literal" language="en">Turbo Mode</value>
+                </label>
+                <!-- bgcolor: Optional (unsigned int, RGB value) -->
+                <hints>                              <!-- Optional (checkbox) -->
+                  <hint>checkbox</hint>
+                </hints>
+              </booleanProperty>
+              <scalarProperty dataType="UINT16">
+                <name>expectedTempProperty</name>
+                <getCode>getExpectedTemp</getCode>
+                <setCode>setExpectedTemp(%s)</setCode>
+                <secured>false</secured>
+                <enabled>true</enabled>
+                <writable>true</writable>
+                <label>
+                  <value type="literal" language="en">Expected Temperature:</value>
+                </label>
+                <!-- bgcolor: Optional (unsigned int, RGB value) -->
+                <hints>
+                  <hint>slider</hint>
+                </hints>
+                <constraintDefs>
+                  <constraintRange>  <!-- The range consists of a minimum, a maximum, and an increment value. -->
+                    <min>32</min>
+                    <max>90</max>
+                    <increment>1</increment>
+                  </constraintRange>
+                </constraintDefs>
+                <unitMeasure>
+                  <value type="literal" language="en">Fahrenheit</value>
+                </unitMeasure>
+              </scalarProperty>
+            </elements>
+          </container>
+
+          <container>
+            <name>infoContainer</name>
+            <secured>false</secured>
+            <enabled>true</enabled>
+            <!-- bgcolor: Optional (unsigned int, RGB value)-->
+            <!-- label: Optional (code, value) -->
+            <hints>
+              <hint>vertical_linear</hint>
+            </hints>
+            <elements>
+              <labelProperty>
+                <name>helpInfoLabelProperty</name>  <!-- Required -->
+                <enabled>true</enabled>             <!-- Required -->
+                <label>
+                  <value type="literal" language="en">For questions, please visit http://www.smartconn.global.</value>
+                </label>                            <!-- Optional (code, value) -->
+                <!-- bgcolor: Optional (unsigned int, RGB value)-->
+                <hints>                             <!-- Optional (textLabel) -->
+                  <hint>textLabel</hint>
+                </hints>
+              </labelProperty>
+            </elements>
+          </container>
+        </elements>
+      </rootContainer>
+    </controlPanel>
+  </controlPanels>
+</controlPanelDevice>
