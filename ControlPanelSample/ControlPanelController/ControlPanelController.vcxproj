@@ -104,8 +104,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ALLJOYN_SRC_HOME_SVC_CTRL_DBG)\cpp\lib;$(ALLJOYN_SRC_HOME_SVC_CTRL_DBG)\services_common\lib;$(ALLJOYN_SRC_HOME_SVC_CTRL_DBG)\notification\lib;$(ALLJOYN_SRC_HOME_SVC_CTRL_DBG)\controlpanel\lib;..\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>alljoyn.lib;ajrouter.lib;alljoyn_about.lib;alljoyn_services_common.lib;alljoyn_notification.lib;alljoyn_controlpanel.lib;samplecommon.lib;ws2_32.lib;Secur32.lib;crypt32.lib;Bcrypt.lib;Ncrypt.lib;iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ALLJOYN_SRC_HOME_SVC_CTRL_DBG)\cpp\lib;$(ALLJOYN_SRC_HOME_SVC_CTRL_DBG)\services_common\lib;$(ALLJOYN_SRC_HOME_SVC_CTRL_DBG)\notification\lib;$(ALLJOYN_SRC_HOME_SVC_CTRL_DBG)\controlpanel\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>alljoyn.lib;ajrouter.lib;alljoyn_about.lib;alljoyn_services_common.lib;alljoyn_notification.lib;alljoyn_controlpanel.lib;ws2_32.lib;Secur32.lib;crypt32.lib;Bcrypt.lib;Ncrypt.lib;iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -163,6 +163,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SampleCommon\SampleCommon.vcxproj">
+      <Project>{0e114e72-7942-4ce3-9f48-82b53010c860}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -4,10 +4,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SampleCommon", "SampleCommon\SampleCommon.vcxproj", "{0E114E72-7942-4CE3-9F48-82B53010C860}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ControlPanelControllee", "ControlPanelControllee\ControlPanelSample.vcxproj", "{2D839855-05BD-49DD-8F82-FAA827818C56}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4479980B-90AB-4D86-A7D7-97CB6F716E86} = {4479980B-90AB-4D86-A7D7-97CB6F716E86}
+		{0E114E72-7942-4CE3-9F48-82B53010C860} = {0E114E72-7942-4CE3-9F48-82B53010C860}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Generated", "Generated\Generated.vcxproj", "{4479980B-90AB-4D86-A7D7-97CB6F716E86}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ControlPanelController", "ControlPanelController\ControlPanelController.vcxproj", "{3C505F6E-35EC-4F49-B84E-8386EEA22639}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0E114E72-7942-4CE3-9F48-82B53010C860} = {0E114E72-7942-4CE3-9F48-82B53010C860}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
