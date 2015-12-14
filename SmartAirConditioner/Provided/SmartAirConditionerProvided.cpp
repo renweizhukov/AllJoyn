@@ -15,6 +15,7 @@
  ******************************************************************************/
 
 #include "SmartAirConditionerProvided.h"
+#include "..\Generated\ControlPanelGenerated.h"
 #include <qcc/String.h>
 
 const uint16_t sleepTimeInMilliSeconds = 5000;
@@ -208,6 +209,8 @@ void turnOnAc()
         isOn = true;
         onOffString = onState;
         printf("[INFO] AC is on.\n");
+
+        ControlPanelGenerated::smartAirConditionerOnOffStringProperty->SendValueChangedSignal();
     }
     else
     {
