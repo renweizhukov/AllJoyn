@@ -2,10 +2,16 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NotificationConsumer", "NotificationConsumer\NotificationConsumer.vcxproj", "{CBB8E61B-A9AC-4065-BC2A-22086AA6708E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4572DE22-BEBE-4D51-B006-FA72E7CEF9AA} = {4572DE22-BEBE-4D51-B006-FA72E7CEF9AA}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SampleCommon", "SampleCommon\SampleCommon.vcxproj", "{4572DE22-BEBE-4D51-B006-FA72E7CEF9AA}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NotificationProducer", "NotificationProducer\NotificationSample.vcxproj", "{E3F63D00-6ED8-42FC-97CA-FC8262EFDB3C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4572DE22-BEBE-4D51-B006-FA72E7CEF9AA} = {4572DE22-BEBE-4D51-B006-FA72E7CEF9AA}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
