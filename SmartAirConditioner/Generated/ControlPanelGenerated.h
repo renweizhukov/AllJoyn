@@ -21,16 +21,16 @@
 #include <alljoyn/controlpanel/Container.h>
 #include <alljoyn/controlpanel/Label.h>
 #include <alljoyn/controlpanel/ActionWithDialog.h>
-#include "C:/Users/RWHTT/Documents/GitHub/AllJoyn/SmartAirConditioner/Generated/SmartAirConditionerCurrentDateProperty.h"
-#include "C:/Users/RWHTT/Documents/GitHub/AllJoyn/SmartAirConditioner/Generated/SmartAirConditionerCurrentTimeProperty.h"
-#include "C:/Users/RWHTT/Documents/GitHub/AllJoyn/SmartAirConditioner/Generated/SmartAirConditionerOnOffStringProperty.h"
-#include "C:/Users/RWHTT/Documents/GitHub/AllJoyn/SmartAirConditioner/Generated/SmartAirConditionerCurrentTempProperty.h"
-#include "C:/Users/RWHTT/Documents/GitHub/AllJoyn/SmartAirConditioner/Generated/SmartAirConditionerCurrentHumidityProperty.h"
-#include "C:/Users/RWHTT/Documents/GitHub/AllJoyn/SmartAirConditioner/Generated/SmartAirConditionerOnAction.h"
-#include "C:/Users/RWHTT/Documents/GitHub/AllJoyn/SmartAirConditioner/Generated/SmartAirConditionerTurnOffConfirmDialog.h"
-#include "C:/Users/RWHTT/Documents/GitHub/AllJoyn/SmartAirConditioner/Generated/SmartAirConditionerAcModeProperty.h"
-#include "C:/Users/RWHTT/Documents/GitHub/AllJoyn/SmartAirConditioner/Generated/SmartAirConditionerTurboModeProperty.h"
-#include "C:/Users/RWHTT/Documents/GitHub/AllJoyn/SmartAirConditioner/Generated/SmartAirConditionerExpectedTempProperty.h"
+#include "../Generated/SmartAirConditionerCurrentDateProperty.h"
+#include "../Generated/SmartAirConditionerCurrentTimeProperty.h"
+#include "../Generated/SmartAirConditionerOnOffStringProperty.h"
+#include "../Generated/SmartAirConditionerCurrentTempProperty.h"
+#include "../Generated/SmartAirConditionerCurrentHumidityProperty.h"
+#include "../Generated/SmartAirConditionerOnAction.h"
+#include "../Generated/SmartAirConditionerTurnOffConfirmDialog.h"
+#include "../Generated/SmartAirConditionerAcModeProperty.h"
+#include "../Generated/SmartAirConditionerTurboModeProperty.h"
+#include "../Generated/SmartAirConditionerExpectedTempProperty.h"
 
 
 /**

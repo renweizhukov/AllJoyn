@@ -23,8 +23,10 @@ const uint16_t sleepTimeInMilliSeconds = 5000;
 static ajn::services::CPSDate currDate(4, 12, 2015);
 static ajn::services::CPSTime currTime(14, 41, 25);
 
-const char* onState = "OnState";
-const char* offState = "OffState";
+const char* onState = "AC On";
+const char* offState = "AC Off";
+const char* turningOnState = "AC Turning On";
+const char* turningOffState = "AC Turning Off";
 static qcc::String onOffString = offState;
 
 static int16_t currTemp = 32;
@@ -178,6 +180,9 @@ void setExpectedTemp(uint16_t expectedTempValue)
                 printf("[INFO] Wait for %d seconds for the change of the current temperature.\n", sleepTimeInMilliSeconds/1000);
                 Sleep(sleepTimeInMilliSeconds);
                 currTemp = expectedTemp;
+                // Send out the ValueChangedSignal for the currentTemp so that getCurrentTemp() will be called
+                // to update the currentTemp property displayed at the controller.
+                ControlPanelGenerated::smartAirConditionerCurrentTempProperty->SendValueChangedSignal();
             }
             else
             {
@@ -204,12 +209,18 @@ void turnOnAc()
     if (!isOn)
     {
         printf("[INFO] Turning on the AC.\n");
+        onOffString = turningOnState;
+        // Send out the ValueChangedSignal for the onOffStringy so that getOnOffString() will be called
+        // to update the onOffString property displayed at the controller.
+        ControlPanelGenerated::smartAirConditionerOnOffStringProperty->SendValueChangedSignal();
+
         printf("[INFO] Wait for %d seconds for the AC to be on.\n", sleepTimeInMilliSeconds/1000);
         Sleep(sleepTimeInMilliSeconds);
         isOn = true;
         onOffString = onState;
         printf("[INFO] AC is on.\n");
-
+        // Send out the ValueChangedSignal for the onOffStringy so that getOnOffString() will be called
+        // to update the onOffString property displayed at the controller.
         ControlPanelGenerated::smartAirConditionerOnOffStringProperty->SendValueChangedSignal();
     }
     else
@@ -223,11 +234,19 @@ void turnOffAc()
     if (isOn)
     {
         printf("[INFO] Turning off the AC.\n");
+        onOffString = turningOffState;
+        // Send out the ValueChangedSignal for the onOffStringy so that getOnOffString() will be called
+        // to update the onOffString property displayed at the controller.
+        ControlPanelGenerated::smartAirConditionerOnOffStringProperty->SendValueChangedSignal();
+
         printf("[INFO] Wait for %d seconds for the AC to be off.\n", sleepTimeInMilliSeconds/1000);
         Sleep(sleepTimeInMilliSeconds);
         isOn = false;
         onOffString = offState;
         printf("[INFO] AC is off.\n");
+        // Send out the ValueChangedSignal for the onOffStringy so that getOnOffString() will be called
+        // to update the onOffString property displayed at the controller.
+        ControlPanelGenerated::smartAirConditionerOnOffStringProperty->SendValueChangedSignal();
     }
     else
     {
