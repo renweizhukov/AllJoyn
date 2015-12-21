@@ -45,6 +45,8 @@ SmartAirConditionerTurboModeProperty* ControlPanelGenerated::smartAirConditioner
 SmartAirConditionerExpectedTempProperty* ControlPanelGenerated::smartAirConditionerExpectedTempProperty = 0;
 Container* ControlPanelGenerated::smartAirConditionerInfoContainer = 0;
 Label* ControlPanelGenerated::smartAirConditionerHelpInfoLabelProperty = 0;
+NotificationAction* ControlPanelGenerated::smartAirConditionerErrorDialogNotificationAction = 0;
+SmartAirConditionerErrorDialog* ControlPanelGenerated::smartAirConditionerErrorDialog = 0;
 
 
 #define CHECK(x) if ((status = x) != ER_OK) { return status; }
@@ -399,6 +401,39 @@ QStatus ControlPanelGenerated::PrepareWidgets(ControlPanelControllee*& controlPa
     smartAirConditionerHelpInfoLabelPropertyHintsVec.push_back(TEXTLABEL);
     smartAirConditionerHelpInfoLabelProperty->setHints(smartAirConditionerHelpInfoLabelPropertyHintsVec);
 
+    smartAirConditionerErrorDialogNotificationAction = NotificationAction::createNotificationAction(LanguageSets::get("smartAirConditionerLanguageSet1"));
+    if (!smartAirConditionerErrorDialogNotificationAction)
+        return ER_FAIL;
+    CHECK(smartAirConditionerUnit->addNotificationAction(smartAirConditionerErrorDialogNotificationAction));
+
+    smartAirConditionerErrorDialog = new SmartAirConditionerErrorDialog("ErrorDialog", NULL);
+    CHECK(smartAirConditionerErrorDialogNotificationAction->setRootWidget(smartAirConditionerErrorDialog));
+
+    smartAirConditionerErrorDialog->setEnabled(true);
+    smartAirConditionerErrorDialog->setIsSecured(false);
+
+    std::vector<qcc::String> smartAirConditionerErrorDialogmessageVec;
+    smartAirConditionerErrorDialogmessageVec.push_back("Something is wrong. Turn off the air conditioner?");
+    smartAirConditionerErrorDialog->setMessages(smartAirConditionerErrorDialogmessageVec);
+    smartAirConditionerErrorDialog->setNumActions(2);
+    smartAirConditionerErrorDialog->setBgColor(0x1e90ff);
+
+    std::vector<qcc::String> smartAirConditionerErrorDialoglabelVec;
+    smartAirConditionerErrorDialoglabelVec.push_back("SmartConn Air Conditioner");
+    smartAirConditionerErrorDialog->setLabels(smartAirConditionerErrorDialoglabelVec);
+
+    std::vector<uint16_t> smartAirConditionerErrorDialogHintsVec;
+    smartAirConditionerErrorDialogHintsVec.push_back(ALERTDIALOG);
+    smartAirConditionerErrorDialog->setHints(smartAirConditionerErrorDialogHintsVec);
+
+    std::vector<qcc::String> smartAirConditionerErrorDialogLabelAction1Vec;
+    smartAirConditionerErrorDialogLabelAction1Vec.push_back("Yes");
+    smartAirConditionerErrorDialog->setLabelsAction1(smartAirConditionerErrorDialogLabelAction1Vec);
+
+    std::vector<qcc::String> smartAirConditionerErrorDialogLabelAction2Vec;
+    smartAirConditionerErrorDialogLabelAction2Vec.push_back("No");
+    smartAirConditionerErrorDialog->setLabelsAction2(smartAirConditionerErrorDialogLabelAction2Vec);
+
     return status;
 }
 
@@ -483,6 +518,14 @@ void ControlPanelGenerated::Shutdown()
     if (smartAirConditionerHelpInfoLabelProperty) {
         delete (smartAirConditionerHelpInfoLabelProperty);
         smartAirConditionerHelpInfoLabelProperty = 0;
+    }
+    if (smartAirConditionerErrorDialogNotificationAction) {
+        delete (smartAirConditionerErrorDialogNotificationAction);
+        smartAirConditionerErrorDialogNotificationAction = 0;
+    }
+    if (smartAirConditionerErrorDialog) {
+        delete (smartAirConditionerErrorDialog);
+        smartAirConditionerErrorDialog = 0;
     }
 
 }

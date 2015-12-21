@@ -28,11 +28,13 @@ using namespace qcc;
 
 AboutData* aboutData = NULL;
 AboutObj* aboutObj = NULL;
-CommonBusListener* controlpanelBusListener = 0;
-BusAttachment* bus = 0;
-ControlPanelService* controlPanelService = 0;
-ControlPanelControllee* controlPanelControllee = 0;
-SrpKeyXListener* srpKeyXListener = 0;
+CommonBusListener* controlpanelBusListener = NULL;
+BusAttachment* bus = NULL;
+ControlPanelService* controlPanelService = NULL;
+ControlPanelControllee* controlPanelControllee = NULL;
+SrpKeyXListener* srpKeyXListener = NULL;
+NotificationService* notiService = NULL;
+NotificationSender* notiSender = NULL;
 
 static volatile sig_atomic_t s_interrupt = false;
 
@@ -51,11 +53,19 @@ static void daemonDisconnectCB()
 void cleanup()
 {
     CommonSampleUtil::aboutServiceDestroy(bus, controlpanelBusListener);
-    if (controlPanelService) 
-    {
+    if (controlPanelService) {
         controlPanelService->shutdownControllee();
     }
     ControlPanelGenerated::Shutdown();
+    if (notiService) {
+        notiService->shutdown();
+        delete notiService;
+        notiService = NULL;
+    }
+    if (notiSender) {
+        delete notiSender;
+        notiSender = NULL;
+    }
     if (controlPanelControllee) {
         delete controlPanelControllee;
         controlPanelControllee = NULL;
@@ -64,28 +74,23 @@ void cleanup()
         delete controlpanelBusListener;
         controlpanelBusListener = NULL;
     }
-    if (aboutData) 
-    {
+    if (aboutData) {
         delete aboutData;
         aboutData = NULL;
     }
-    if (aboutObj) 
-    {
+    if (aboutObj) {
         delete aboutObj;
         aboutObj = NULL;
     }
-    if (controlPanelService) 
-    {
+    if (controlPanelService) {
         delete controlPanelService;
         controlPanelService = NULL;
     }
-    if (srpKeyXListener) 
-    {
+    if (srpKeyXListener) {
         delete srpKeyXListener;
         srpKeyXListener = NULL;
     }
-    if (bus) 
-    {
+    if (bus) {
         delete bus;
         bus = NULL;
     }
@@ -114,6 +119,9 @@ start:
     controlPanelService = ControlPanelService::getInstance();
     QCC_SetDebugLevel(logModules::CONTROLPANEL_MODULE_LOG_NAME, logModules::ALL_LOG_LEVELS);
 
+    // Initialize Notification Service object.
+    notiService = NotificationService::getInstance();
+
     srpKeyXListener = new SrpKeyXListener();
 
     /* Connect to the daemon */
@@ -139,10 +147,10 @@ start:
 
     controlpanelBusListener = new CommonBusListener(bus, daemonDisconnectCB);
 
-    qcc::String device_id, app_id;
-    qcc::String app_name = "SmartConnAirConditioner";
+    String device_id, app_id;
+    String app_name = "SmartConnAirConditioner";
     DeviceNamesType deviceNames;
-    deviceNames.insert(move(pair<qcc::String, qcc::String>("en", "Wei's AC")));
+    deviceNames.insert(move(pair<String, String>("en", "Wei's AC")));
     GuidUtil::GetInstance()->GetDeviceIdString(&device_id);
     GuidUtil::GetInstance()->GenerateGUID(&app_id);
 
@@ -176,6 +184,14 @@ start:
         return 1;
     }
 
+    // Initialize Notification Sender object.
+    notiSender = notiService->initSend(bus, aboutData);
+    if (!notiSender) {
+        cout << "Could not initialize Sender - exiting application" << endl;
+        cleanup();
+        return 1;
+    }
+
     status = CommonSampleUtil::aboutServiceAnnounce();
     if (status != ER_OK) {
         cout << "Could not announce." << endl;
@@ -184,17 +200,35 @@ start:
     }
 
     cout << "Sent announce, waiting for Controllers" << endl;
+    cout << "Enter in the ControlPanelService object path or press 'enter' to use default:" << endl;
 
-    while ((s_interrupt == false) && (s_restart == false)) 
-    {
-#ifdef _WIN32
-        Sleep(1 * 1000);
-#else
-        sleep(1);
-#endif
+    string input;
+    String controlPanelServiceObjectPath;
+    String defaultControlPanelServiceObjectPath = "/ControlPanel/SmartAirConditioner/ErrorDialog";
+
+    getline(std::cin, input);
+    while ((s_interrupt == false) && (s_restart == false) && (!cin.eof())) {
+        controlPanelServiceObjectPath = input.length() ? input.c_str() : defaultControlPanelServiceObjectPath;
+
+        NotificationMessageType messageType = WARNING;
+        NotificationText textToSend("en", "Something is wrong with this air conditioner!");
+        vector<NotificationText> vecMessages;
+        vecMessages.push_back(textToSend);
+        Notification notification(messageType, vecMessages);
+        notification.setControlPanelServiceObjectPath(controlPanelServiceObjectPath.c_str());
+
+        status = notiSender->send(notification, 7200);
+        if (status != ER_OK) {
+            cout << "Notification was not sent successfully" << endl;
+        } else {
+            cout << "Notification sent successfully" << endl;
+        }
+
+        cout << "Enter in the ControlPanelService object path or press 'enter' to use default:" << endl;
+        getline(cin, input);
     }
 
-    std::cout << "Cleaning up in 10 seconds" << std::endl;
+    cout << "Cleaning up in 10 seconds" << endl;
 #ifdef _WIN32
     Sleep(10 * 1000);
 #else

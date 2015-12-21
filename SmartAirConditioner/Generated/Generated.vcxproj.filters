@@ -54,6 +54,9 @@
     <ClInclude Include="..\Provided\SmartAirConditionerProvided.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SmartAirConditionerErrorDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ControlPanelGenerated.cc">
@@ -90,6 +93,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Provided\SmartAirConditionerProvided.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SmartAirConditionerErrorDialog.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

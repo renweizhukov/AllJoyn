@@ -144,6 +144,7 @@
     <ClInclude Include="SmartAirConditionerCurrentHumidityProperty.h" />
     <ClInclude Include="SmartAirConditionerCurrentTempProperty.h" />
     <ClInclude Include="SmartAirConditionerCurrentTimeProperty.h" />
+    <ClInclude Include="SmartAirConditionerErrorDialog.h" />
     <ClInclude Include="SmartAirConditionerExpectedTempProperty.h" />
     <ClInclude Include="SmartAirConditionerOnAction.h" />
     <ClInclude Include="SmartAirConditionerOnOffStringProperty.h" />
@@ -158,6 +159,7 @@
     <ClCompile Include="SmartAirConditionerCurrentHumidityProperty.cc" />
     <ClCompile Include="SmartAirConditionerCurrentTempProperty.cc" />
     <ClCompile Include="SmartAirConditionerCurrentTimeProperty.cc" />
+    <ClCompile Include="SmartAirConditionerErrorDialog.cc" />
     <ClCompile Include="SmartAirConditionerExpectedTempProperty.cc" />
     <ClCompile Include="SmartAirConditionerOnAction.cc" />
     <ClCompile Include="SmartAirConditionerOnOffStringProperty.cc" />
@@ -165,7 +167,9 @@
     <ClCompile Include="SmartAirConditionerTurnOffConfirmDialog.cc" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="..\XML\SmartAirConditioner.xml" />
+    <Xml Include="..\XML\SmartAirConditioner.xml">
+      <SubType>Designer</SubType>
+    </Xml>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

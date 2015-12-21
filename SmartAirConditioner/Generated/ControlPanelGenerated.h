@@ -31,6 +31,7 @@
 #include "../Generated/SmartAirConditionerAcModeProperty.h"
 #include "../Generated/SmartAirConditionerTurboModeProperty.h"
 #include "../Generated/SmartAirConditionerExpectedTempProperty.h"
+#include "../Generated/SmartAirConditionerErrorDialog.h"
 
 
 /**
@@ -86,6 +87,10 @@ class ControlPanelGenerated {
     static ajn::services::Container* smartAirConditionerInfoContainer;
 
     static ajn::services::Label* smartAirConditionerHelpInfoLabelProperty;
+
+    static ajn::services::NotificationAction* smartAirConditionerErrorDialogNotificationAction;
+
+    static ajn::services::SmartAirConditionerErrorDialog* smartAirConditionerErrorDialog;
 
 
 };

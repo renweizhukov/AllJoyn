@@ -22,6 +22,7 @@
   <languageSet name="languageSet1">
     <language>en</language>
   </languageSet>
+
   <controlPanels>
     <controlPanel languageSet="languageSet1">
       <rootContainer>
@@ -348,4 +349,34 @@
       </rootContainer>
     </controlPanel>
   </controlPanels>
+    
+  <notificationActions>
+    <dialog languageSet="languageSet1">
+      <name>ErrorDialog</name>
+      <secured>false</secured>
+      <enabled>true</enabled>
+      <message>
+        <value type="literal" language="en">Something is wrong. Turn off the air conditioner?</value>
+      </message>
+      <label>
+        <value type="literal" language="en">SmartConn Air Conditioner</value>
+      </label>
+        <bgcolor>0x1e90ff</bgcolor>
+        <hints>
+          <hint>alertdialog</hint>
+        </hints>
+        <button>
+          <label>
+            <value type="literal" language="en">Yes</value>
+          </label>
+          <executeCode>turnOffAc();</executeCode>
+        </button>
+        <button>
+          <label>
+            <value type="literal" language="en">No</value>
+          </label>
+          <executeCode>cancelTurnOffAc();</executeCode>
+        </button>
+    </dialog>
+  </notificationActions>
 </controlPanelDevice>
