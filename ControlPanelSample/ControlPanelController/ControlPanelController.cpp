@@ -89,6 +89,7 @@ static void announceHandlerCallback(qcc::String const& busName, unsigned short v
                                     const ajn::AboutData& aboutData)
 {
     std::cout << "Got announceHandlerCallback" << std::endl;
+    std::cout << "Remote bus name = " << busName << std::endl;
     controlPanelController->createControllableDevice(busName, objectDescription);
 }
 
@@ -132,6 +133,8 @@ int _tmain(int argc, _TCHAR* argv[])
         cleanup();
         return 1;
     }
+
+    std::cout << "Local bus name = " << bus->GetUniqueName() << std::endl;
 
     controlPanelController = new ControlPanelController();
     controlPanelListener = new ControlPanelListenerImpl(controlPanelController);
