@@ -103,13 +103,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>QCC_OS_GROUP_WINDOWS;UNICODE;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>$(ALLJOYN_SRC_HOME_SVC_SAMP_COMM);$(ALLJOYN_SRC_HOME_CPP_DBG_INC);$(ALLJOYN_SRC_HOME_COMM_INC);$(ALLJOYN_SRC_HOME_CORE_INC);$(ALLJOYN_SRC_HOME_SVC_COMM_INC);$(ALLJOYN_SRC_HOME_SVC_CTRL_INC);$(ALLJOYN_SRC_HOME_SVC_NOTI_INC);$(ALLJOYN_SRC_HOME_SVC_CONF_INC);$(ALLJOYN_SRC_HOME_SVC_ONBO_INC );..\SampleCommon;..\Generated</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ALLJOYN_SRC_1504_HOME)\services\base\services_common\cpp\inc;$(ALLJOYN_SRC_1504_HOME)\core\alljoyn\build\win7\x86_64\debug\dist\cpp\inc;$(ALLJOYN_SRC_1504_HOME)\core\alljoyn\common\inc;$(ALLJOYN_SRC_1504_HOME)\core\alljoyn\alljoyn_core\inc;$(ALLJOYN_SRC_1504_HOME)\services\base\controlpanel\cpp\inc;$(ALLJOYN_SRC_1504_HOME)\services\base\notification\cpp\inc;$(ALLJOYN_SRC_1504_HOME)\services\base\config\cpp\inc;$(ALLJOYN_SRC_1504_HOME)\services\base\onboarding\cpp\inc;..\SampleCommon;..\Generated</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ALLJOYN_SRC_HOME_SVC_CTRL_DBG)\cpp\lib;$(ALLJOYN_SRC_HOME_SVC_CTRL_DBG)\services_common\lib;$(ALLJOYN_SRC_HOME_SVC_CTRL_DBG)\notification\lib;$(ALLJOYN_SRC_HOME_SVC_CTRL_DBG)\controlpanel\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ALLJOYN_SRC_1504_HOME)\services\base\controlpanel\build\win7\x86_64\debug\dist\cpp\lib;$(ALLJOYN_SRC_1504_HOME)\services\base\controlpanel\build\win7\x86_64\debug\dist\services_common\lib;$(ALLJOYN_SRC_1504_HOME)\services\base\controlpanel\build\win7\x86_64\debug\dist\notification\lib;$(ALLJOYN_SRC_1504_HOME)\services\base\controlpanel\build\win7\x86_64\debug\dist\controlpanel\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>alljoyn.lib;ajrouter.lib;alljoyn_about.lib;alljoyn_services_common.lib;alljoyn_notification.lib;alljoyn_controlpanel.lib;ws2_32.lib;Secur32.lib;crypt32.lib;Bcrypt.lib;Ncrypt.lib;iphlpapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
