@@ -90,7 +90,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>QCC_OS_GROUP_WINDOWS;ROUTER;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ALLJOYN_SRC_1504_HOME)\core\alljoyn\common\inc;$(ALLJOYN_SRC_1504_HOME)\core\alljoyn\alljoyn_core\inc;$(ALLJOYN_SRC_1504_HOME)\core\alljoyn\build\win7\x86_64\debug\dist\cpp\inc;$(ALLJOYN_SRC_1504_HOME)\services\base\services_common\cpp\inc;$(ALLJOYN_SRC_1504_HOME)\services\base\controlpanel\cpp\inc;$(ALLJOYN_SRC_1504_HOME)%\services\base\notification\cpp\inc;..\Provided</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ALLJOYN_SRC_1504_HOME)\core\alljoyn\common\inc;$(ALLJOYN_SRC_1504_HOME)\core\alljoyn\alljoyn_core\inc;$(ALLJOYN_SRC_1504_HOME)\core\alljoyn\build\win7\x86_64\debug\dist\cpp\inc;$(ALLJOYN_SRC_1504_HOME)\services\base\services_common\cpp\inc;$(ALLJOYN_SRC_1504_HOME)\services\base\controlpanel\cpp\inc;..\Provided</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
