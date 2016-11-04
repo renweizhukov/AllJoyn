@@ -1,0 +1,75 @@
+import sys
+sys.path.insert(0, '../..')
+import Utility
+
+Import('env')
+
+controllerEnv = env.Clone()
+
+componentName = 'ControlPanelController'
+
+Utility.PrintOneLineLog(Utility.EventLevel.info, componentName, 
+'================================START==========================================')
+
+# Add the controlpanel and notification include paths. Note that '#' forces scons to interpret a path name 
+# as relative to the top-level SConstruct directory.
+additionalIncludePathList = \
+    ['$AJ_SRC_PATH' + Utility.ReplacePathSeparators('/services/base/controlpanel/cpp/inc'),
+     '$AJ_SRC_PATH' + Utility.ReplacePathSeparators('/services/base/notification/cpp/inc'),
+     '#SampleCommon', 
+     '#Generated']
+controllerEnv.Append(CPPPATH = additionalIncludePathList)
+
+# Add AllJoyn library paths.
+alljoynLibraryPathList = \
+    ['$AJ_SRC_PATH' + Utility.ReplacePathSeparators('/core/alljoyn/build/$OS/$CPU/$VARIANT/dist/cpp/lib'),
+     '$AJ_SRC_PATH' + Utility.ReplacePathSeparators('/core/alljoyn/build/$OS/$CPU/$VARIANT/dist/services_common/lib'),
+     '$AJ_SRC_PATH' + Utility.ReplacePathSeparators('/core/alljoyn/build/$OS/$CPU/$VARIANT/dist/notification/lib'),
+     '$AJ_SRC_PATH' + Utility.ReplacePathSeparators('/core/alljoyn/build/$OS/$CPU/$VARIANT/dist/controlpanel/lib')]
+controllerEnv.Append(LIBPATH = alljoynLibraryPathList)
+
+# Add the library paths for libSampleCommon.a.
+controllerEnv.Append(LIBPATH = ['$DISTDIR/cpp/lib'])
+
+# Add the libraries used by ControlPanelController. Note that we have to place ajrouter after SampleCommon and 
+# alljoyn_services_common after alljoyn_notification, otherwise we would have got the "undefined reference" errors 
+# as the gcc linker couldn't resolve the ajrouter functions references in SampleCommon. For details, please refer to 
+# the following webpage:
+# http://stackoverflow.com/questions/1517138/trying-to-include-a-library-but-keep-getting-undefined-reference-to-messages
+if controllerEnv['OS'] == 'linux':
+    controllerEnv.Append(LIBS = [
+        'SampleCommon', 
+        'alljoyn', 'ajrouter', 'alljoyn_about', 'alljoyn_notification', 'alljoyn_services_common', 'alljoyn_controlpanel'])
+
+# Print out the macro definitions.
+Utility.PrintBuildArguments(componentName, 'macro defintions', controllerEnv['CPPDEFINES'])
+
+# Print out the include paths.
+Utility.PrintBuildArguments(componentName, 'include paths', controllerEnv['CPPPATH'])
+
+# Print out the library paths.
+Utility.PrintBuildArguments(componentName, 'library paths', controllerEnv['LIBPATH'])
+
+# Print out the input libraries.
+Utility.PrintBuildArguments(componentName, 'libraries', controllerEnv['LIBS'])
+
+# For Linux, suppress the unused-parameter and deprecated-declarations warnings.
+if controllerEnv['OS'] == 'linux':
+    controllerEnv.Append(CXXFLAGS = ['-Wno-unused-parameter', '-Wno-deprecated-declarations'])
+
+# Print out the build flags.
+Utility.PrintBuildArguments(componentName, 'C flags', controllerEnv['CFLAGS'])
+Utility.PrintBuildArguments(componentName, 'C++ flags', controllerEnv['CXXFLAGS'])
+
+# Building the console program.
+targetExeName = 'ControlPanelController'
+sourceFileList = Glob('*.cpp')
+
+Utility.PrintBuildArguments(componentName, 'source files', sourceFileList)
+
+controllerExe = controllerEnv.Program(targetExeName, sourceFileList)
+
+controllerEnv.Install('$DISTDIR/cpp/bin', controllerExe)
+
+Utility.PrintOneLineLog(Utility.EventLevel.info, componentName, 
+'=================================END===========================================')

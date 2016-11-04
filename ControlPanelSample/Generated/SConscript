@@ -1,0 +1,48 @@
+import sys
+sys.path.insert(0, '..')
+import Utility
+
+Import('env')
+
+componentName = 'Generated'
+
+generatedEnv = env.Clone()
+
+Utility.PrintOneLineLog(Utility.EventLevel.info, componentName, 
+'================================START==========================================')
+
+# Add two more alljoyn include paths. Note that '#' forces scons to interpret a path name 
+# as relative to the top-level SConstruct directory.
+additionalIncludePathList = \
+    ['$AJ_SRC_PATH' + Utility.ReplacePathSeparators('/services/base/controlpanel/cpp/inc'),
+     '#Provided']
+generatedEnv.Append(CPPPATH = additionalIncludePathList)
+
+# Print out the include paths.
+Utility.PrintBuildArguments(componentName, 'include paths', generatedEnv['CPPPATH'])
+
+# For linux, suppress the unused-parameter warning.
+if generatedEnv['OS'] == 'linux':
+    generatedEnv.Append(CXXFLAGS = ['-Wno-unused-parameter'])
+
+# Print out the build flags.
+Utility.PrintBuildArguments(componentName, 'C++ flags', generatedEnv['CXXFLAGS'])
+
+# Building the static library.
+targetLibName = 'Generated'
+sourceFileList = \
+    ['ControlPanelGenerated.cpp', 
+     '#Provided/ControlPanelProvided.cpp', 
+     'MyDeviceAreYouSure.cpp', 
+     'MyDeviceHeatProperty.cpp',
+     'MyDeviceLightConfirm.cpp',
+     'MyDeviceOvenAction.cpp']
+
+Utility.PrintBuildArguments(componentName, 'source files', sourceFileList)
+
+generatedLib = generatedEnv.StaticLibrary(targetLibName, sourceFileList)
+
+generatedEnv.Install('$DISTDIR/cpp/lib', generatedLib)
+
+Utility.PrintOneLineLog(Utility.EventLevel.info, componentName, 
+'=================================END===========================================')

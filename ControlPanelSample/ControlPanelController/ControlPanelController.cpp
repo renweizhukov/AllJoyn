@@ -103,7 +103,7 @@ void WaitForSigInt(void) {
     }
 }
 
-int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, char* argv[])
 {
     QCC_UNUSED(argc);
     QCC_UNUSED(argv);

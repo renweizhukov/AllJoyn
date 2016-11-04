@@ -1,0 +1,41 @@
+import sys
+sys.path.insert(0, '..')
+import Utility
+
+Import('env')
+
+componentName = 'SampleCommon'
+
+sampleCommonEnv = env.Clone()
+
+Utility.PrintOneLineLog(Utility.EventLevel.info, componentName, 
+'================================START==========================================')
+
+# Print out the include paths.
+Utility.PrintBuildArguments(componentName, 'include paths', sampleCommonEnv['CPPPATH'])
+
+# For linux, suppress the unused-parameter warning.
+if sampleCommonEnv['OS'] == 'linux':
+    sampleCommonEnv.Append(CXXFLAGS = ['-Wno-unused-parameter'])
+
+# Print out the build flags.
+Utility.PrintBuildArguments(componentName, 'C++ flags', sampleCommonEnv['CXXFLAGS'])
+
+# Building the static library.
+targetLibName = 'SampleCommon'
+sourceFileList = \
+    ['AboutObjApi.cpp', 
+     'AJInitializer.cpp', 
+     'AnnounceHandlerImpl.cpp', 
+     'CommonBusListener.cpp',
+     'CommonSampleUtil.cpp',
+     'SrpKeyXListener.cpp']
+
+Utility.PrintBuildArguments(componentName, 'source files', sourceFileList)
+
+sampleCommonLib = sampleCommonEnv.StaticLibrary(targetLibName, sourceFileList)
+
+sampleCommonEnv.Install('$DISTDIR/cpp/lib', sampleCommonLib)
+
+Utility.PrintOneLineLog(Utility.EventLevel.info, componentName, 
+'=================================END===========================================')

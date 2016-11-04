@@ -21,9 +21,10 @@
 
 #pragma once
 
-#include "targetver.h"
-
-#include <tchar.h>
+#ifdef QCC_OS_GROUP_WINDOWS
+    #include "targetver.h"
+    #include <tchar.h>
+#endif
 
 #include <iostream>
 #include <sstream>

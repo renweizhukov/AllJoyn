@@ -1,0 +1,140 @@
+# Copyright AllSeen Alliance. All rights reserved.
+#
+#    Permission to use, copy, modify, and/or distribute this software for any
+#    purpose with or without fee is hereby granted, provided that the above
+#    copyright notice and this permission notice appear in all copies.
+#
+#    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#    WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#    MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#    ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#    WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#    ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+# 
+
+import os
+import Utility
+    
+componentName = 'ControlPanelSample'
+
+vars = Variables()
+
+def GetPathFromEnvironVarOrArgument(pathEnvName, description, argumentName):
+    defaultPath = Utility.GetDefaultPathFromEnvironVar(description, pathEnvName)
+    path = ARGUMENTS.get(argumentName, defaultPath)
+    if not path:
+        Utility.PrintOneLineLog(Utility.EventLevel.error, componentName, 
+            'The {0} path is not found.'.format(description))
+        Exit(1)
+    
+    Utility.PrintOneLineLog(Utility.EventLevel.info, componentName,
+        'The {0} path is {1}.'.format(description, path))
+    
+    vars.Add(PathVariable(argumentName, 
+        'Directory containing the {0}'.format(description), 
+        path))  
+    
+    return path
+
+# Get the version of AllJoyn core from scons command line arguments and check 
+# if it is supported. If AJ_VER is not specified, it will be set to the default 
+# value.
+defaultAlljoynVersion = '1604'
+alljoynVersion = ARGUMENTS.get('AJ_VER', defaultAlljoynVersion)
+
+supportedAlljoynVersions = ['1604', '1504']
+if alljoynVersion not in supportedAlljoynVersions:
+    Utility.PrintOneLineLog(Utility.EventLevel.error, GatewayName, 
+    'Building with this alljoyn core version {0} is not supported.'.format(alljoynVersion))
+    Exit(1)
+
+vars.Add(EnumVariable('AJ_VER',
+                      'AllJoyn core version',
+                      alljoynVersion,
+                      allowed_values=('1504', '1604')))
+    
+# If AJ_SRC_PATH is not specified, use the OS environment variable to generate 
+# the default AllJoyn core source path.
+alljoynCoreSrcPathEnvName = 'ALLJOYN_SRC_' + alljoynVersion + '_HOME'
+alljoynCoreSrcPath = GetPathFromEnvironVarOrArgument(
+                        alljoynCoreSrcPathEnvName, 
+                        'AllJoyn core source', 
+                        'AJ_SRC_PATH')
+
+# Get the global environment from AllJoyn build_core SConscript.
+alljoynBuildCorePath = alljoynCoreSrcPath + '/core/alljoyn/build_core/SConscript'
+alljoynBuildCorePath = alljoynBuildCorePath.replace('/', os.sep)
+alljoynEnv = SConscript(alljoynBuildCorePath)
+Utility.PrintAlljoynEnv(alljoynEnv)
+
+# Clone a copy of AllJoyn core environment since we may need to change some 
+# construction variables and want to keep the AllJoyn core environment intact.
+env = alljoynEnv.Clone()
+
+# Set additional construction variables which are not included in the AllJoyn 
+# core environment.
+vars.Update(env)
+Help(vars.GenerateHelpText(env))
+        
+# Check if the specified build arguments are supported. Currently only the 64-bit builds on 
+# Linux and Windows are supported.
+if not Utility.IsBuildSupported(alljoynEnv):
+    Utility.PrintOneLineLog(Utility.EventLevel.error, GatewayName, 
+    'Only the combination of win7 and x86 is supported.')
+    Exit(1)
+    
+# Add the common include paths shared by all the libraries and executables.
+commonIncludePathList = \
+    ['$AJ_SRC_PATH' + Utility.ReplacePathSeparators('/core/alljoyn/common/inc'), 
+     '$AJ_SRC_PATH' + Utility.ReplacePathSeparators('/core/alljoyn/alljoyn_core/inc'),
+     '$AJ_SRC_PATH' + Utility.ReplacePathSeparators('/core/alljoyn/build/$OS/$CPU/$VARIANT/dist/cpp/inc'),
+     '$AJ_SRC_PATH' + Utility.ReplacePathSeparators('/services/base/services_common/cpp/inc')]
+env.Append(CPPPATH = commonIncludePathList)
+
+# Invoke the SConscript to build the Generated lib.
+env.SConscript(
+    ['./Generated/SConscript'], 
+    variant_dir = '$OBJDIR/cpp/Generated', 
+    duplicate = 0, 
+    exports = ['env'])
+
+# Invoke the SConscript to build the SampleCommon lib.
+env.SConscript(
+    ['./SampleCommon/SConscript'], 
+    variant_dir = '$OBJDIR/cpp/SampleCommon', 
+    duplicate = 0, 
+    exports = ['env'])
+
+# Invoke the SConscript to build the ControlPanelControllee executable.
+env.SConscript(['./ControlPanelControllee/SConscript'], variant_dir = '$OBJDIR/cpp/ControlPanelControllee', 
+        duplicate = 0, exports = ['env'])   
+
+# Invoke the SConscript to build the ControlPanelController executable.  
+env.SConscript(['./ControlPanelController/SConscript'], variant_dir = '$OBJDIR/cpp/ControlPanelController', 
+        duplicate = 0, exports = ['env'])
+        
+# For Linux, install the AllJoyn shared libraries which are required for running the executable.
+if env['OS'] == 'linux':
+    alljoynCoreLibPath = alljoynCoreSrcPath + '/core/alljoyn/build/$OS/$CPU/$VARIANT/dist/cpp/lib/'
+    env.Command(target = "$DISTDIR/cpp/bin/liballjoyn.so",
+        source = alljoynCoreLibPath + 'liballjoyn.so',
+        action = Copy("$TARGET", "$SOURCE"))
+    env.Command(target = "$DISTDIR/cpp/bin/liballjoyn_about.so",
+        source = alljoynCoreLibPath + 'liballjoyn_about.so',
+        action = Copy("$TARGET", "$SOURCE"))
+    
+    alljoynServicesCommonLibPath = alljoynCoreSrcPath + '/core/alljoyn/build/$OS/$CPU/$VARIANT/dist/services_common/lib/'
+    env.Command(target = "$DISTDIR/cpp/bin/liballjoyn_services_common.so",
+        source = alljoynServicesCommonLibPath + 'liballjoyn_services_common.so',
+        action = Copy("$TARGET", "$SOURCE"))
+        
+    alljoynControlPanelLibPath = alljoynCoreSrcPath + '/core/alljoyn/build/$OS/$CPU/$VARIANT/dist/controlpanel/lib/'
+    env.Command(target = "$DISTDIR/cpp/bin/liballjoyn_controlpanel.so",
+        source = alljoynControlPanelLibPath + 'liballjoyn_controlpanel.so',
+        action = Copy("$TARGET", "$SOURCE"))
+        
+    alljoynNotificationLibPath = alljoynCoreSrcPath + '/core/alljoyn/build/$OS/$CPU/$VARIANT/dist/notification/lib/'
+    env.Command(target = "$DISTDIR/cpp/bin/liballjoyn_notification.so",
+        source = alljoynNotificationLibPath + 'liballjoyn_notification.so',
+        action = Copy("$TARGET", "$SOURCE"))
