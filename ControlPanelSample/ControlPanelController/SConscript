@@ -40,6 +40,11 @@ if controllerEnv['OS'] == 'linux':
     controllerEnv.Append(LIBS = [
         'SampleCommon', 
         'alljoyn', 'ajrouter', 'alljoyn_about', 'alljoyn_notification', 'alljoyn_services_common', 'alljoyn_controlpanel'])
+elif controllerEnv['OS'] == 'win7':
+    controllerEnv.Append(LIBS = [
+        'Generated', 'SampleCommon', 
+        'alljoyn', 'ajrouter', 'alljoyn_about', 'alljoyn_services_common', 'alljoyn_notification', 'alljoyn_controlpanel',
+        'ws2_32', 'Secur32', 'crypt32', 'Bcrypt', 'Ncrypt', 'iphlpapi', 'kernel32'])
 
 # Print out the macro definitions.
 Utility.PrintBuildArguments(componentName, 'macro defintions', controllerEnv['CPPDEFINES'])

@@ -39,6 +39,11 @@ if controlleeEnv['OS'] == 'linux':
     controlleeEnv.Append(LIBS = [
         'Generated', 'SampleCommon', 
         'alljoyn', 'ajrouter', 'alljoyn_about', 'alljoyn_services_common', 'alljoyn_notification', 'alljoyn_controlpanel'])
+elif controlleeEnv['OS'] == 'win7':
+    controlleeEnv.Append(LIBS = [
+        'Generated', 'SampleCommon', 
+        'alljoyn', 'ajrouter', 'alljoyn_about', 'alljoyn_services_common', 'alljoyn_notification', 'alljoyn_controlpanel',
+        'ws2_32', 'Secur32', 'crypt32', 'Bcrypt', 'Ncrypt', 'iphlpapi', 'kernel32'])
 
 # Print out the macro definitions.
 Utility.PrintBuildArguments(componentName, 'macro defintions', controlleeEnv['CPPDEFINES'])
