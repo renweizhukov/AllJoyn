@@ -16,7 +16,7 @@
            OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
   -->
-<controlPanelDevice xmlns="http://www.allseenalliance.org/controlpanel/gen">
+<controlPanelDevice xmlns="http://www.alljoyn.org/controlpanel/gen">
   <name>SmartAirConditioner</name>
   <headerCode>#include "SmartAirConditionerProvided.h"</headerCode>
   <languageSet name="languageSet1">
@@ -29,7 +29,7 @@
         <name>rootContainer</name>  <!-- Required -->
         <secured>false</secured>    <!-- Required (true, false) -->
         <enabled>true</enabled>     <!-- Required (true, false) -->
-        <bgColor>0x1e90ff</bgColor> <!-- Optional (unsigned int, RGB value) -->
+        <bgcolor>0x1e90ff</bgcolor> <!-- Optional (unsigned int, RGB value) -->
         <label>                     <!-- Optional (code, value) -->
           <value type="literal" language="en">SmartConn Air Conditioner</value>
         </label>
@@ -340,7 +340,7 @@
                 </label>                            <!-- Optional (code, value) -->
                 <!-- bgcolor: Optional (unsigned int, RGB value)-->
                 <hints>                             <!-- Optional (textLabel) -->
-                  <hint>textLabel</hint>
+                  <hint>textlabel</hint>
                 </hints>
               </labelProperty>
             </elements>

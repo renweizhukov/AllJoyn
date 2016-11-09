@@ -88,6 +88,7 @@ QStatus ControlPanelGenerated::PrepareWidgets(ControlPanelControllee*& controlPa
 
     smartAirConditionerRootContainer->setEnabled(true);
     smartAirConditionerRootContainer->setIsSecured(false);
+    smartAirConditionerRootContainer->setBgColor(0x1e90ff);
 
     std::vector<qcc::String> smartAirConditionerRootContainerlabelVec;
     smartAirConditionerRootContainerlabelVec.push_back("SmartConn Air Conditioner");
