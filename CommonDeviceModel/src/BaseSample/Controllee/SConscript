@@ -1,0 +1,57 @@
+# Copyright AllSeen Alliance. All rights reserved.
+#
+#    Permission to use, copy, modify, and/or distribute this software for any
+#    purpose with or without fee is hereby granted, provided that the above
+#    copyright notice and this permission notice appear in all copies.
+#
+#    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#    WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#    MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#    ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#    WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#    ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+# 
+
+import sys
+import re
+sys.path.insert(0, '../../..')
+import Utility
+
+Import('controlleeEnv')
+
+baseSampleControlleeEnv = controlleeEnv.Clone()
+
+componentName = 'BaseSampleControllee'
+
+Utility.PrintOneLineLog(Utility.EventLevel.info, componentName, 
+'================================START==========================================')
+
+# Print out the macro definitions.
+Utility.PrintBuildArguments(componentName, 'macro defintions', baseSampleControlleeEnv['CPPDEFINES'])
+
+# Print out the include paths.
+Utility.PrintBuildArguments(componentName, 'include paths', baseSampleControlleeEnv['CPPPATH'])
+
+# Print out the build flags.
+Utility.PrintBuildArguments(componentName, 'C flags', baseSampleControlleeEnv['CFLAGS'])
+Utility.PrintBuildArguments(componentName, 'C++ flags', baseSampleControlleeEnv['CXXFLAGS'])
+
+# Building the static library.
+targetLibName = 'basesample_controllee'
+srcs = baseSampleControlleeEnv.Glob('*.cc')
+srcs += baseSampleControlleeEnv.Glob('#src/BaseSample/*.cc')
+#srcs += baseSampleControlleeEnv.Glob('#src/interfaces/vendor_defined/*.cc')
+
+# Remove the controller source files.
+#regex = re.compile(r'.*Controller.*.cc')
+#srcs = [i for i in srcs if not regex.match(str(i))]
+
+Utility.PrintBuildArguments(componentName, 'source files', srcs)
+
+baseSampleControlleeLib = baseSampleControlleeEnv.StaticLibrary(targetLibName, srcs)
+
+baseSampleControlleeEnv.Install(['$DISTDIR/cdm/lib'], baseSampleControlleeLib)
+
+Utility.PrintOneLineLog(Utility.EventLevel.info, componentName, 
+'=================================END===========================================')

@@ -16,7 +16,7 @@
 import os
 import Utility
     
-componentName = 'ControlPanelSample'
+componentName = 'CommonDeviceModel'
 
 vars = Variables()
 
@@ -43,7 +43,7 @@ def GetPathFromEnvironVarOrArgument(pathEnvName, description, argumentName):
 defaultAlljoynVersion = '1604'
 alljoynVersion = ARGUMENTS.get('AJ_VER', defaultAlljoynVersion)
 
-supportedAlljoynVersions = ['1604', '1504']
+supportedAlljoynVersions = ['1604']
 if alljoynVersion not in supportedAlljoynVersions:
     Utility.PrintOneLineLog(Utility.EventLevel.error, GatewayName, 
     'Building with this alljoyn core version {0} is not supported.'.format(alljoynVersion))
@@ -52,7 +52,7 @@ if alljoynVersion not in supportedAlljoynVersions:
 vars.Add(EnumVariable('AJ_VER',
                       'AllJoyn core version',
                       alljoynVersion,
-                      allowed_values=('1504', '1604')))
+                      allowed_values=('1604')))
     
 # If AJ_SRC_PATH is not specified, use the OS environment variable to generate 
 # the default AllJoyn core source path.
@@ -77,64 +77,59 @@ env = alljoynEnv.Clone()
 vars.Update(env)
 Help(vars.GenerateHelpText(env))
         
-# Check if the specified build arguments are supported. Currently only the 64-bit builds on 
-# Linux and Windows are supported.
+# Check if the specified build arguments are supported. Currently only the 64-bit build on 
+# Linux is supported.
 if not Utility.IsBuildSupported(alljoynEnv):
     Utility.PrintOneLineLog(Utility.EventLevel.error, GatewayName, 
-    'Only two build configurations of linux+x86_64 and win7+x86_64 are supported.')
+    'Only the build configuration linux+x86_64 is supported.')
     Exit(1)
     
-# Add the common include paths shared by all the libraries and executables.
+# Add the common AllJoyn core and CDM include paths.
 commonIncludePathList = \
     ['$AJ_SRC_PATH' + Utility.ReplacePathSeparators('/core/alljoyn/common/inc'), 
      '$AJ_SRC_PATH' + Utility.ReplacePathSeparators('/core/alljoyn/alljoyn_core/inc'),
      '$AJ_SRC_PATH' + Utility.ReplacePathSeparators('/core/alljoyn/build/$OS/$CPU/$VARIANT/dist/cpp/inc'),
-     '$AJ_SRC_PATH' + Utility.ReplacePathSeparators('/services/base/services_common/cpp/inc')]
+     '$AJ_SRC_PATH' + Utility.ReplacePathSeparators('/services/cdm/cpp/inc'),
+     '#inc', 
+     Utility.ReplacePathSeparators('#src/BaseSample'),
+     Utility.ReplacePathSeparators('#src/interfaces/vendor_defined')]
 env.Append(CPPPATH = commonIncludePathList)
 
-# Invoke the SConscript to build the Generated lib.
-env.SConscript(
-    ['./Generated/SConscript'], 
-    variant_dir = '$OBJDIR/cpp/Generated', 
+# Add AllJoyn library paths.
+alljoynLibraryPathList = \
+    ['$AJ_SRC_PATH' + Utility.ReplacePathSeparators('/services/cdm/build/$OS/$CPU/$VARIANT/dist/cpp/lib'),
+     '$AJ_SRC_PATH' + Utility.ReplacePathSeparators('/services/cdm/build/$OS/$CPU/$VARIANT/dist/cdm/lib')]
+env.Append(LIBPATH = alljoynLibraryPathList)
+
+# Add AllJoyn libraries.
+env.Append(LIBS = ['ajrouter', 'alljoyn', 'alljoyn_about', 'alljoyn_cdm'])
+
+# Suppress the unused-parameter warning.
+env.Append(CPPFLAGS=['-Wno-unused-parameter'])
+
+# Invoke the SConscript to build the BingoControllee executable.
+env.SConscript(['./src/BingoControllee/SConscript'], 
+    variant_dir = '$OBJDIR/cdm/BingoControllee', 
+    duplicate = 0, 
+    exports = ['env'])   
+
+# Invoke the SConscript to build the BingoController executable.  
+env.SConscript(['./src/BingoController/SConscript'], 
+    variant_dir = '$OBJDIR/cdm/BingoController', 
     duplicate = 0, 
     exports = ['env'])
-
-# Invoke the SConscript to build the SampleCommon lib.
-env.SConscript(
-    ['./SampleCommon/SConscript'], 
-    variant_dir = '$OBJDIR/cpp/SampleCommon', 
-    duplicate = 0, 
-    exports = ['env'])
-
-# Invoke the SConscript to build the ControlPanelControllee executable.
-env.SConscript(['./ControlPanelControllee/SConscript'], variant_dir = '$OBJDIR/cpp/ControlPanelControllee', 
-        duplicate = 0, exports = ['env'])   
-
-# Invoke the SConscript to build the ControlPanelController executable.  
-env.SConscript(['./ControlPanelController/SConscript'], variant_dir = '$OBJDIR/cpp/ControlPanelController', 
-        duplicate = 0, exports = ['env'])
         
 # For Linux, install the AllJoyn shared libraries which are required for running the executable.
 if env['OS'] == 'linux':
-    alljoynCoreLibPath = alljoynCoreSrcPath + '/core/alljoyn/build/$OS/$CPU/$VARIANT/dist/cpp/lib/'
-    env.Command(target = "$DISTDIR/cpp/bin/liballjoyn.so",
+    alljoynCoreLibPath = alljoynCoreSrcPath + '/services/cdm/build/$OS/$CPU/$VARIANT/dist/cpp/lib/'
+    env.Command(target = "$DISTDIR/cdm/bin/liballjoyn.so",
         source = alljoynCoreLibPath + 'liballjoyn.so',
         action = Copy("$TARGET", "$SOURCE"))
-    env.Command(target = "$DISTDIR/cpp/bin/liballjoyn_about.so",
+    env.Command(target = "$DISTDIR/cdm/bin/liballjoyn_about.so",
         source = alljoynCoreLibPath + 'liballjoyn_about.so',
         action = Copy("$TARGET", "$SOURCE"))
     
-    alljoynServicesCommonLibPath = alljoynCoreSrcPath + '/core/alljoyn/build/$OS/$CPU/$VARIANT/dist/services_common/lib/'
-    env.Command(target = "$DISTDIR/cpp/bin/liballjoyn_services_common.so",
-        source = alljoynServicesCommonLibPath + 'liballjoyn_services_common.so',
-        action = Copy("$TARGET", "$SOURCE"))
-        
-    alljoynControlPanelLibPath = alljoynCoreSrcPath + '/core/alljoyn/build/$OS/$CPU/$VARIANT/dist/controlpanel/lib/'
-    env.Command(target = "$DISTDIR/cpp/bin/liballjoyn_controlpanel.so",
-        source = alljoynControlPanelLibPath + 'liballjoyn_controlpanel.so',
-        action = Copy("$TARGET", "$SOURCE"))
-        
-    alljoynNotificationLibPath = alljoynCoreSrcPath + '/core/alljoyn/build/$OS/$CPU/$VARIANT/dist/notification/lib/'
-    env.Command(target = "$DISTDIR/cpp/bin/liballjoyn_notification.so",
-        source = alljoynNotificationLibPath + 'liballjoyn_notification.so',
+    alljoynCdmLibPath = alljoynCoreSrcPath + '/services/cdm/build/$OS/$CPU/$VARIANT/dist/cdm/lib/'
+    env.Command(target = "$DISTDIR/cdm/bin/liballjoyn_cdm.so",
+        source = alljoynCdmLibPath + 'liballjoyn_cdm.so',
         action = Copy("$TARGET", "$SOURCE"))

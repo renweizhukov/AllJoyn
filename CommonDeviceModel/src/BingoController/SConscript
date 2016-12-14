@@ -1,0 +1,83 @@
+# Copyright AllSeen Alliance. All rights reserved.
+#
+#    Permission to use, copy, modify, and/or distribute this software for any
+#    purpose with or without fee is hereby granted, provided that the above
+#    copyright notice and this permission notice appear in all copies.
+#
+#    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#    WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#    MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#    ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#    WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#    ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+# 
+
+import sys
+import re
+sys.path.insert(0, '../..')
+import Utility
+
+Import('env')
+
+controllerEnv = env.Clone()
+
+componentName = 'BingoController'
+
+Utility.PrintOneLineLog(Utility.EventLevel.info, componentName, 
+'================================START==========================================')
+
+# Add the CDM, BaseSample, and vendor-defined interface include paths. Note that '#' forces scons to interpret a path name 
+# as relative to the top-level SConstruct directory.
+additionalIncludePathList = [Utility.ReplacePathSeparators('#src/BaseSample/Controller')]
+controllerEnv.Append(CPPPATH = additionalIncludePathList)
+
+# Invoke the SConscript to build the WiFiOnOffStatusIntf static library for controller.
+controllerEnv.SConscript(['#src/interfaces/vendor_defined/SConscriptController'], 
+    variant_dir = '$OBJDIR/cdm/interfaces/vendor_defined', 
+    duplicate = 0, 
+    exports = ['controllerEnv'])
+
+# Invoke the SConscript to build the BaseSample static library for controller.
+controllerEnv.SConscript(['#src/BaseSample/Controller/SConscript'], 
+    variant_dir = '$OBJDIR/cpp/BaseSample/Controller', 
+    duplicate = 0, 
+    exports = ['controllerEnv'])
+
+# Add the library paths for basesample_controller.
+controllerEnv.Append(LIBPATH = ['$DISTDIR/cdm/lib'])
+
+# Add the BaseSampleController library. Note that we have to use Prepend to place the two libraries at the beginning,
+# otherwise we would have got the "undefined reference" errors as the gcc linker couldn't resolve the alljoyn_cdm functions 
+# references in the two libraries. For details, please refer to the following webpage:
+# http://stackoverflow.com/questions/1517138/trying-to-include-a-library-but-keep-getting-undefined-reference-to-messages
+controllerEnv.Prepend(LIBS = ['basesample_controller', 'wifionoffstatusintf_controller'])
+
+# Print out the macro definitions.
+Utility.PrintBuildArguments(componentName, 'macro defintions', controllerEnv['CPPDEFINES'])
+
+# Print out the include paths.
+Utility.PrintBuildArguments(componentName, 'include paths', controllerEnv['CPPPATH'])
+
+# Print out the library paths.
+Utility.PrintBuildArguments(componentName, 'library paths', controllerEnv['LIBPATH'])
+
+# Print out the input libraries.
+Utility.PrintBuildArguments(componentName, 'libraries', controllerEnv['LIBS'])
+
+# Print out the build flags.
+Utility.PrintBuildArguments(componentName, 'C flags', controllerEnv['CFLAGS'])
+Utility.PrintBuildArguments(componentName, 'C++ flags', controllerEnv['CXXFLAGS'])
+
+# Building the console program.
+targetExeName = 'BingoController'
+srcs = controllerEnv.Glob('*.cc')
+
+Utility.PrintBuildArguments(componentName, 'source files', srcs)
+
+controllerExe = controllerEnv.Program(targetExeName, srcs)
+
+controllerEnv.Install('$DISTDIR/cdm/bin', controllerExe)
+
+Utility.PrintOneLineLog(Utility.EventLevel.info, componentName, 
+'=================================END===========================================')

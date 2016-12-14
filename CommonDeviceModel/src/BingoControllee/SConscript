@@ -1,0 +1,80 @@
+# Copyright AllSeen Alliance. All rights reserved.
+#
+#    Permission to use, copy, modify, and/or distribute this software for any
+#    purpose with or without fee is hereby granted, provided that the above
+#    copyright notice and this permission notice appear in all copies.
+#
+#    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#    WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#    MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#    ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#    WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#    ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+# 
+
+import sys
+import re
+sys.path.insert(0, '../..')
+import Utility
+
+Import('env')
+
+controlleeEnv = env.Clone()
+
+componentName = 'BingoControllee'
+
+Utility.PrintOneLineLog(Utility.EventLevel.info, componentName, 
+'================================START==========================================')
+
+# Add the CDM, BaseSample, and vendor-defined interface include paths. Note that '#' forces scons to interpret a path name 
+# as relative to the top-level SConstruct directory.
+additionalIncludePathList = [Utility.ReplacePathSeparators('#src/BaseSample/Controllee')]
+controlleeEnv.Append(CPPPATH = additionalIncludePathList)
+
+# Invoke the SConscript to build the WiFiOnOffStatusIntf static library for controllee.
+controlleeEnv.SConscript(['#src/interfaces/vendor_defined/SConscriptControllee'], 
+    variant_dir = '$OBJDIR/cdm/interfaces/vendor_defined', 
+    duplicate = 0, 
+    exports = ['controlleeEnv'])
+
+# Invoke the SConscript to build the BaseSample static library for controllee.
+controlleeEnv.SConscript(['#src/BaseSample/Controllee/SConscript'], 
+    variant_dir = '$OBJDIR/cdm/BaseSample/Controllee', 
+    duplicate = 0, 
+    exports = ['controlleeEnv'])
+
+# Add the library paths for basesample_controllee.
+controlleeEnv.Append(LIBPATH = ['$DISTDIR/cdm/lib'])
+    
+# Add the WiFiOnOffStatusIntfControllee and BaseSampleControllee libraries.
+controlleeEnv.Append(LIBS = ['wifionoffstatusintf_controllee', 'basesample_controllee'])
+
+# Print out the macro definitions.
+Utility.PrintBuildArguments(componentName, 'macro defintions', controlleeEnv['CPPDEFINES'])
+
+# Print out the include paths.
+Utility.PrintBuildArguments(componentName, 'include paths', controlleeEnv['CPPPATH'])
+
+# Print out the library paths.
+Utility.PrintBuildArguments(componentName, 'library paths', controlleeEnv['LIBPATH'])
+
+# Print out the input libraries.
+Utility.PrintBuildArguments(componentName, 'libraries', controlleeEnv['LIBS'])
+
+# Print out the build flags.
+Utility.PrintBuildArguments(componentName, 'C flags', controlleeEnv['CFLAGS'])
+Utility.PrintBuildArguments(componentName, 'C++ flags', controlleeEnv['CXXFLAGS'])
+
+# Building the console program.
+targetExeName = 'BingoControllee'
+srcs = controlleeEnv.Glob('*.cc')
+
+Utility.PrintBuildArguments(componentName, 'source files', srcs)
+
+controlleeExe = controlleeEnv.Program(targetExeName, srcs)
+
+controlleeEnv.Install('$DISTDIR/cdm/bin', controlleeExe)
+
+Utility.PrintOneLineLog(Utility.EventLevel.info, componentName, 
+'=================================END===========================================')
